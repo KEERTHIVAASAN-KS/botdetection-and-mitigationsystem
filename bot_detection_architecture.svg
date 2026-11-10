@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1050" viewBox="0 0 1800 1050" role="img" aria-labelledby="title desc">
+<title id="title">Multi-Layer Bot Detection and Mitigation System Architecture</title>
+<desc id="desc">Architecture showing browser signals entering Nginx and three independent detection layers, whose scores are stored in Redis and combined by a risk controller. Nginx enforces allow, rate limit, challenge, or block actions.</desc>
+<defs>
+  <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1,1 L11,6 L1,11 Z" fill="#64748b"/></marker>
+  <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1,1 L11,6 L1,11 Z" fill="#2563eb"/></marker>
+  <marker id="arrowTeal" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1,1 L11,6 L1,11 Z" fill="#0f766e"/></marker>
+  <style>
+    text{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#0f172a}
+    .title{font-size:38px;font-weight:700;letter-spacing:-.5px}
+    .subtitle{font-size:18px;fill:#475569}
+    .section{font-size:15px;font-weight:700;letter-spacing:1.5px;fill:#64748b}
+    .head{font-size:22px;font-weight:700}
+    .body{font-size:17px;fill:#334155}
+    .small{font-size:15px;fill:#475569}
+    .tiny{font-size:13px;fill:#64748b}
+    .card{fill:#fff;stroke:#cbd5e1;stroke-width:2}
+    .arrow{fill:none;stroke:#64748b;stroke-width:3;marker-end:url(#arrow)}
+    .dashed{stroke-dasharray:9 8}
+  </style>
+</defs>
+<rect width="1800" height="1050" fill="#f8fafc"/>
+<text x="72" y="72" class="title">Multi-Layer Bot Detection and Mitigation</text>
+<text x="72" y="108" class="subtitle">Three independent signals are combined into a session risk and enforced at the reverse proxy</text>
+
+<text x="72" y="165" class="section">CLIENT &amp; TRAFFIC ENTRY</text>
+<text x="480" y="165" class="section">DETECTION LAYERS</text>
+<text x="1320" y="165" class="section">DECISION &amp; ENFORCEMENT</text>
+
+<!-- signal routes, behind components -->
+<path d="M340 540 H390 V270 H455" class="arrow"/>
+<path d="M340 312 H390 V464 H455" class="arrow"/>
+<path d="M340 353 H390 V658 H455" class="arrow"/>
+<path d="M740 270 H790" class="arrow"/>
+<path d="M740 464 H790" class="arrow"/>
+<path d="M740 658 H790" class="arrow"/>
+<path d="M990 270 H1060 V442 H1110" class="arrow"/>
+<path d="M990 464 H1110" class="arrow"/>
+<path d="M990 658 H1060 V486 H1110" class="arrow"/>
+<path d="M1280 464 H1340" class="arrowBlue"/>
+<path d="M1340 710 H1200 V925 H48 V548 H72" fill="none" stroke="#2563eb" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#arrowBlue)"/>
+
+<!-- Browser -->
+<rect x="72" y="205" width="268" height="228" rx="18" class="card"/>
+<rect x="72" y="205" width="268" height="48" rx="18" fill="#e2e8f0"/>
+<path d="M72 235 Q72 253 90 253 H322 Q340 253 340 235" fill="#e2e8f0"/>
+<text x="96" y="237" class="head">Browser session</text>
+<circle cx="101" cy="285" r="5" fill="#2563eb"/><text x="119" y="291" class="body">HTTP requests</text>
+<circle cx="101" cy="326" r="5" fill="#0f766e"/><text x="119" y="332" class="body">Mouse events</text>
+<circle cx="101" cy="367" r="5" fill="#7c3aed"/><text x="119" y="373" class="body">Fingerprint attributes</text>
+<text x="96" y="411" class="tiny">Session identifier links the signals</text>
+
+<!-- Nginx -->
+<rect x="72" y="485" width="268" height="125" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="96" y="526" class="head">Nginx reverse proxy</text>
+<text x="96" y="558" class="small">Forwards traffic · writes access logs</text>
+<text x="96" y="585" class="small">Enforces the final action</text>
+<path d="M206 433 V485" class="arrow"/>
+
+<!-- Layer cards -->
+<g>
+  <rect x="455" y="195" width="535" height="150" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+  <rect x="455" y="195" width="12" height="150" rx="6" fill="#2563eb"/>
+  <text x="487" y="230" class="head">1 · HTTP behavior</text>
+  <text x="487" y="264" class="body">Nginx access logs → session feature aggregation</text>
+  <text x="487" y="295" class="small">Request timing · repeats · status and method ratios</text>
+  <rect x="487" y="310" width="134" height="25" rx="12" fill="#dbeafe"/><text x="503" y="328" class="tiny" fill="#1d4ed8">CatBoost model</text>
+  <rect x="790" y="233" width="200" height="74" rx="14" fill="#fff" stroke="#bfdbfe" stroke-width="2"/>
+  <text x="817" y="264" class="head" style="font-size:19px">R_http</text><text x="817" y="289" class="small">HTTP risk score</text>
+</g>
+<g>
+  <rect x="455" y="389" width="535" height="150" rx="18" fill="#f0fdfa" stroke="#99f6e4" stroke-width="2"/>
+  <rect x="455" y="389" width="12" height="150" rx="6" fill="#0f766e"/>
+  <text x="487" y="424" class="head">2 · Mouse behavior</text>
+  <text x="487" y="458" class="body">JavaScript collector → movement feature extraction</text>
+  <text x="487" y="489" class="small">Speed · distance · direction changes · pauses · clicks</text>
+  <rect x="487" y="504" width="134" height="25" rx="12" fill="#ccfbf1"/><text x="503" y="522" class="tiny" fill="#115e59">CatBoost model</text>
+  <rect x="790" y="427" width="200" height="74" rx="14" fill="#fff" stroke="#99f6e4" stroke-width="2"/>
+  <text x="817" y="458" class="head" style="font-size:19px">R_mouse</text><text x="817" y="483" class="small">Mouse risk score</text>
+</g>
+<g>
+  <rect x="455" y="583" width="535" height="150" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+  <rect x="455" y="583" width="12" height="150" rx="6" fill="#7c3aed"/>
+  <text x="487" y="618" class="head">3 · Fingerprint &amp; headers</text>
+  <text x="487" y="652" class="body">Browser attributes + HTTP headers → consistency rules</text>
+  <text x="487" y="683" class="small">User-agent · platform · language · renderer · browser APIs</text>
+  <rect x="487" y="698" width="132" height="25" rx="12" fill="#ede9fe"/><text x="503" y="716" class="tiny" fill="#5b21b6">Rule-based score</text>
+  <rect x="790" y="621" width="200" height="74" rx="14" fill="#fff" stroke="#c4b5fd" stroke-width="2"/>
+  <text x="817" y="652" class="head" style="font-size:19px">R_fp</text><text x="817" y="677" class="small">Fingerprint risk score</text>
+</g>
+
+<!-- Redis and controller -->
+<rect x="1110" y="377" width="170" height="174" rx="18" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+<text x="1141" y="416" class="head">Redis</text>
+<text x="1132" y="449" class="small">Session scores</text>
+<text x="1132" y="474" class="small">Counters</text>
+<text x="1132" y="499" class="small">Temporary blocks</text>
+<text x="1132" y="529" class="tiny">Shared session state</text>
+
+<rect x="1340" y="340" width="310" height="220" rx="20" fill="#eef2ff" stroke="#a5b4fc" stroke-width="2"/>
+<text x="1372" y="382" class="head">Risk controller</text>
+<text x="1372" y="417" class="body">Fuse available layer scores</text>
+<text x="1372" y="450" class="body">Classify session</text>
+<rect x="1372" y="468" width="246" height="34" rx="10" fill="#fff" stroke="#c7d2fe"/>
+<text x="1388" y="491" class="small">HUMAN · BOT · UNCERTAIN</text>
+<text x="1372" y="535" class="tiny">Weights rescale when a layer is unavailable</text>
+
+<!-- Outcomes -->
+<rect x="1340" y="625" width="310" height="143" rx="18" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="1372" y="663" class="head">Nginx action</text>
+<text x="1372" y="700" class="body">Allow · Rate limit</text>
+<text x="1372" y="731" class="body">Challenge · Block</text>
+<path d="M1495 560 V625" class="arrowBlue"/>
+<text x="1530" y="601" class="tiny" fill="#1d4ed8">decision</text>
+
+<!-- Optional model training -->
+<rect x="455" y="793" width="535" height="106" rx="16" fill="#fff" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 7"/>
+<text x="482" y="828" class="head" style="font-size:19px">Offline model training</text>
+<text x="482" y="858" class="small">Zenodo web-robot data → HTTP model   ·   M4D mouse data → mouse model</text>
+<text x="482" y="883" class="tiny">Fingerprint rules are configured separately; trained models serve the live layers</text>
+<path d="M720 793 V744" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 7" marker-end="url(#arrow)"/>
+
+<!-- legend and notes -->
+<line x1="72" y1="950" x2="1728" y2="950" stroke="#e2e8f0" stroke-width="2"/>
+<text x="72" y="984" class="small">Dashed blue line: action returned to Nginx for enforcement</text>
+<text x="1728" y="984" class="tiny" text-anchor="end">Architecture based on the Review 3 system model</text>
+</svg>
