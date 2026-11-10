@@ -60,8 +60,10 @@ async def mouselayer(req:Request):
 async def fingerprintlayer(req:Request):
     data=await req.json()
     sessionid=data["sessionid"]
+    httpua=req.headers.get("user-agent","")
+    acceptlang=req.headers.get("accept-language","")
     features=data["features"]
-    result=detect_bot_fp(features)
+    result=detect_bot_fp(features,httpua,acceptlang)
     await updatescore(req,sessionid,"rfp",result)
 
 @app.get("/nginxenforcement")
