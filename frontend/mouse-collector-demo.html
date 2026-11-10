@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mouse Collector Demo</title>
+  <style>
+    body { font: 15px/1.5 system-ui, sans-serif; margin: 2rem auto; max-width: 900px; padding: 0 1rem; }
+    #status { margin-bottom: 1rem; color: #444; }
+    pre { background: #f2f4f7; border: 1px solid #d0d7de; border-radius: 8px; padding: 1rem; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>Mouse collector demo</h1>
+  <p id="status">Starting session…</p>
+  <pre id="summary">Move and click the mouse to collect features.</pre>
+
+  <script>
+    const statusNode = document.querySelector("#status");
+    const summaryNode = document.querySelector("#summary");
+
+    window.addEventListener("botmouse:summary", (event) => {
+      summaryNode.textContent = JSON.stringify(event.detail, null, 2);
+    });
+
+    (async () => {
+      try {
+        const response = await fetch("/session", { method: "POST" });
+        if (!response.ok) throw new Error(`Session endpoint returned ${response.status}`);
+        const { sessionid } = await response.json();
+
+        const collector = document.createElement("script");
+        collector.src = "/frontend/mouse-collector.js";
+        collector.dataset.sessionId = sessionid;
+        collector.dataset.endpoint = "/mouse";
+        collector.dataset.sendInterval = "5000";
+        document.body.appendChild(collector);
+
+        statusNode.textContent = `Session ${sessionid} — summaries post to /mouse every 5 seconds.`;
+      } catch (error) {
+        statusNode.textContent = `Could not start mouse demo: ${error.message}`;
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <style>
+    body { margin: 0; padding: 1rem; background: #fff; }
+    pre { margin: 0; font: 14px/1.5 ui-monospace, monospace; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <pre id="summary" aria-live="polite"></pre>
+
+  <!-- No endpoint/session ID: the collector runs locally and does not POST anywhere. -->
+  <script src="./mouse-collector.js" defer></script>
+  <script>
+    window.addEventListener("botmouse:summary", (event) => {
+      document.querySelector("#summary").textContent = JSON.stringify(event.detail, null, 2);
+    });
+  </script>
+</body>
+</html>
